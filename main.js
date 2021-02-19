@@ -57,6 +57,24 @@ function Load(width,height){
       Label1.color = iros[1];
       scene.addChild(Label1);
 
+      var Label2 = new Label();
+      Label2.font  = "20px monospace";
+      Label2.x = 0;
+      Label2.y = 150;
+      Label2.width = 600;
+      Label2.height = 20;
+      Label2.text = "ポイント";
+      scene.addChild(Label2);
+
+      var Label3 = new Label();
+      Label3.font  = "20px monospace";
+      Label3.x = 0;
+      Label3.y = 170;
+      Label3.width = 600;
+      Label3.height = 20;
+      Label3.text = "0";
+      scene.addChild(Label3);
+
       /*
       var S_Input1 = new Entity();
       S_Input1.moveTo(0,0);
@@ -113,12 +131,13 @@ function Load(width,height){
           Judgment.frame = 4;
         }
         else{
-          Point--;
+          if(Point>0) Point--;
           Judgment.frame = 5;
         }
         iros = iro();
         Label1.text = iros[0];
         Label1.color = iros[1];
+        Label3.text = Point;
         return;
       })
 
@@ -128,12 +147,13 @@ function Load(width,height){
           Judgment.frame = 4;
         }
         else{
-          Point--;
+          if(Point>0) Point--;
           Judgment.frame = 5;
         }
         iros = iro();
         Label1.text = iros[0];
         Label1.color = iros[1];
+        Label3.text = Point;
         return;
       })
 
@@ -143,12 +163,13 @@ function Load(width,height){
           Judgment.frame = 4;
         }
         else{
-          Point--;
+          if(Point>0) Point--;
           Judgment.frame = 5;
         }
         iros = iro();
         Label1.text = iros[0];
         Label1.color = iros[1];
+        Label3.text = Point;
         return;
       })
 
@@ -158,12 +179,13 @@ function Load(width,height){
           Judgment.frame = 4;
         }
         else{
-          Point--;
+          if(Point>0) Point--;
           Judgment.frame = 5;
         }
         iros = iro();
         Label1.text = iros[0];
         Label1.color = iros[1];
+        Label3.text = Point;
         return;
       })
 
