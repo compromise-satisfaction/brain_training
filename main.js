@@ -1,23 +1,60 @@
 enchant()
 
-///window.onload = function(){
+function rand(n){
+  return Math.floor(Math.random() * (n));
+}
+
+function iro(){
+  var Values = [
+    ["red","あか"],
+    ["blue","あお"],
+    ["black","くろ"],
+    ["yellow","きいろ"]
+  ];
+  var aaa = rand(4);
+  var bbb = rand(3);
+  var Values2 = [];
+  var k = 0;
+  for (var i = 0; i < Values.length; i++) {
+    if(i != aaa){
+      Values2[k] = Values[i];
+      k++;
+    }
+  }
+  return([Values[aaa][1],Values2[bbb][0]]);
+}
 
 function Load(width,height){
   var core = new Core(width, height);
 
+  core.preload("ボタン.png");
   core.fps = 10;
   core.onload = function(){
+    var StartScene = function(){
+       var scene = new Scene();                                // 新しいシーンを作る
+       var Start = new Sprite(505,505);
+       Start.image = core.assets["image/Start.png"];
+       Start.x = 0;
+       Start.y = 0;
+       scene.addChild(Start);
+       scene.on("touchstart",function(e){
+         core.replaceScene(MenuScene(0));
+       })
+       return scene;
+    };
     var MainScene = function(){
       var scene = new Scene();                                // 新しいシーンを作る
 
+      var iros = iro();
+
       var Label1 = new Label();
-      Label1.font  = "30px monospace";
-      Label1.color = 'black';
-      Label1.x = 300;
+      Label1.font  = "90px monospace";
+      Label1.x = 150;
       Label1.y = 150;
       Label1.width = 300;
       Label1.height = 300;
-      Label1.text = "みどり";
+      Label1.text = iros[0];
+      Label1.color = iros[1];
       scene.addChild(Label1);
 
       /*
@@ -33,45 +70,100 @@ function Load(width,height){
       scene.addChild(S_Input1);
       */
 
-      var S_Input1 = new Entity();
-      S_Input1.moveTo(0,450);
-      S_Input1.width = 150;
-      S_Input1.height = 150;
-      S_Input1._element = document.createElement('input');
-      S_Input1._element.value = "赤";
-      S_Input1._element.type = "submit";
-      scene.addChild(S_Input1);
+      var Button_red = new Sprite(150,150);
+      Button_red.image = core.assets["ボタン.png"];
+      Button_red.x = 0;
+      Button_red.y = 450;
+      Button_red.frame = 0;
+      scene.addChild(Button_red);
 
-      var S_Input2 = new Entity();
-      S_Input2.moveTo(150,450);
-      S_Input2.width = 150;
-      S_Input2.height = 150;
-      S_Input2._element = document.createElement('input');
-      S_Input2._element.value = "黒";
-      S_Input2._element.type = "submit";
-      scene.addChild(S_Input2);
+      var Button_black = new Sprite(150,150);
+      Button_black.image = core.assets["ボタン.png"];
+      Button_black.x = 150;
+      Button_black.y = 450;
+      Button_black.frame = 1;
+      scene.addChild(Button_black);
 
-      var S_Input3 = new Entity();
-      S_Input3.moveTo(300,450);
-      S_Input3.width = 150;
-      S_Input3.height = 150;
-      S_Input3._element = document.createElement('input');
-      S_Input3._element.value = "青";
-      S_Input3._element.type = "submit";
-      scene.addChild(S_Input3);
+      var Button_blue = new Sprite(150,150);
+      Button_blue.image = core.assets["ボタン.png"];
+      Button_blue.x = 300;
+      Button_blue.y = 450;
+      Button_blue.frame = 2;
+      scene.addChild(Button_blue);
 
-      var S_Input4 = new Entity();
-      S_Input4.moveTo(450,450);
-      S_Input4.width = 150;
-      S_Input4.height = 150;
-      S_Input4._element = document.createElement('input');
-      S_Input4._element.value = "黄";
-      S_Input4._element.type = "submit";
-      scene.addChild(S_Input4);
+      var Button_yellow = new Sprite(150,150);
+      Button_yellow.image = core.assets["ボタン.png"];
+      Button_yellow.x = 450;
+      Button_yellow.y = 450;
+      Button_yellow.frame = 3;
+      scene.addChild(Button_yellow);
 
-      S_Input1.addEventListener("touchstart",function(){
-        Label1.text = "くろ";
-        Label1.color = "green";
+      var Judgment = new Sprite(150,150);
+      Judgment.image = core.assets["ボタン.png"];
+      Judgment.x = 0;
+      Judgment.y = 0;
+      Judgment.frame = 6;
+      scene.addChild(Judgment);
+
+      var Point = 0;
+
+      Button_red.addEventListener("touchstart",function(){
+        if(Label1.color=="red"){
+          Point++;
+          Judgment.frame = 4;
+        }
+        else{
+          Point--;
+          Judgment.frame = 5;
+        }
+        iros = iro();
+        Label1.text = iros[0];
+        Label1.color = iros[1];
+        return;
+      })
+
+      Button_blue.addEventListener("touchstart",function(){
+        if(Label1.color=="blue"){
+          Point++;
+          Judgment.frame = 4;
+        }
+        else{
+          Point--;
+          Judgment.frame = 5;
+        }
+        iros = iro();
+        Label1.text = iros[0];
+        Label1.color = iros[1];
+        return;
+      })
+
+      Button_black.addEventListener("touchstart",function(){
+        if(Label1.color=="black"){
+          Point++;
+          Judgment.frame = 4;
+        }
+        else{
+          Point--;
+          Judgment.frame = 5;
+        }
+        iros = iro();
+        Label1.text = iros[0];
+        Label1.color = iros[1];
+        return;
+      })
+
+      Button_yellow.addEventListener("touchstart",function(){
+        if(Label1.color=="yellow"){
+          Point++;
+          Judgment.frame = 4;
+        }
+        else{
+          Point--;
+          Judgment.frame = 5;
+        }
+        iros = iro();
+        Label1.text = iros[0];
+        Label1.color = iros[1];
         return;
       })
 
