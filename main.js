@@ -1,5 +1,7 @@
 enchant()
 
+var Start_time = null;
+
 function rand(n){
   return Math.floor(Math.random() * (n));
 }
@@ -11,8 +13,7 @@ function iro(){
     ["black","くろ"],
     ["yellow","きいろ"]
   ];
-  var aaa = rand(4);
-  var bbb = rand(3);
+  var aaa = rand(Values.length);
   var Values2 = [];
   var k = 0;
   for (var i = 0; i < Values.length; i++) {
@@ -21,6 +22,7 @@ function iro(){
       k++;
     }
   }
+  var bbb = rand(Values2.length);
   return([Values[aaa][1],Values2[bbb][0]]);
 }
 
@@ -28,17 +30,33 @@ function Load(width,height){
   var core = new Core(width, height);
 
   core.preload("ボタン.png");
-  core.fps = 10;
+  core.fps = 100;
   core.onload = function(){
     var StartScene = function(){
        var scene = new Scene();                                // 新しいシーンを作る
-       var Start = new Sprite(505,505);
-       Start.image = core.assets["image/Start.png"];
-       Start.x = 0;
-       Start.y = 0;
-       scene.addChild(Start);
+
+       var Numbers = 0;
+       var Start_text = "ルール:        文字の色をタッチしよう。二分間の正解数から　　　不正回数を引いた数を　　競います。   　　　　　　　　　　　     タッチしてスタート。";
+
+       function Texts(a){
+         if(i%12==0) Numbers += 50;
+         Text[i] = new Sprite();
+         Text[i]._element = document.createElement("innerHTML");
+         Text[i]._style.font  = "50px monospace";
+         Text[i]._element.textContent = a;
+         Text[i].x = 50 * (i%12);
+         Text[i].y = Numbers;
+         scene.addChild(Text[i]);
+       }
+
+       for (var i = 0; i < Start_text.length; i++) {
+         Texts(Start_text[i]);
+       }
+
        scene.on("touchstart",function(e){
-         core.replaceScene(MenuScene(0));
+         Start_time = new Date().getTime() - new Date().getTime()%1000;
+         Start_time = Start_time/1000 + 120;
+         core.replaceScene(MainScene());
        })
        return scene;
     };
@@ -46,15 +64,16 @@ function Load(width,height){
       var scene = new Scene();                                // 新しいシーンを作る
 
       var iros = iro();
+      var Time = 120;
 
       var Label1 = new Label();
       Label1.font  = "90px monospace";
-      Label1.x = 150;
       Label1.y = 150;
       Label1.width = 300;
       Label1.height = 300;
       Label1.text = iros[0];
       Label1.color = iros[1];
+      Label1.x = width/2 - Label1.text.length * 45;
       scene.addChild(Label1);
 
       var Label2 = new Label();
@@ -63,16 +82,16 @@ function Load(width,height){
       Label2.y = 150;
       Label2.width = 600;
       Label2.height = 20;
-      Label2.text = "ポイント";
+      Label2.text = "ポイント:0";
       scene.addChild(Label2);
 
       var Label3 = new Label();
       Label3.font  = "20px monospace";
       Label3.x = 0;
-      Label3.y = 170;
+      Label3.y = 180;
       Label3.width = 600;
       Label3.height = 20;
-      Label3.text = "0";
+      Label3.text = "残り時間:120秒";
       scene.addChild(Label3);
 
       /*
@@ -125,6 +144,20 @@ function Load(width,height){
 
       var Point = 0;
 
+      function View(){
+        var old_iros1 = iros[0]
+        var old_iros2 = iros[1];
+        iros = iro();
+        while (old_iros1==iros[0] && old_iros2==iros[1]) {
+          iros = iro();
+        }
+        Label2.text = "ポイント:" + Point;
+        Label1.text = iros[0];
+        Label1.color = iros[1];
+        Label1.x = width/2 - Label1.text.length * 45;
+        return;
+      }
+
       Button_red.addEventListener("touchstart",function(){
         if(Label1.color=="red"){
           Point++;
@@ -134,11 +167,15 @@ function Load(width,height){
           if(Point>0) Point--;
           Judgment.frame = 5;
         }
-        iros = iro();
-        Label1.text = iros[0];
-        Label1.color = iros[1];
-        Label3.text = Point;
+        View();
         return;
+      })
+
+      Button_black.addEventListener("enterframe",function(){
+        Label3.text = Start_time - (new Date().getTime() - new Date().getTime()%1000)/1000;
+        if(Label3.text > 99) Label3.text = Label3.text.substring(0,3);
+        else Label3.text = Label3.text.substring(0,2);
+        Label3.text = "残り時間:" + Label3.text + "秒";
       })
 
       Button_blue.addEventListener("touchstart",function(){
@@ -150,10 +187,7 @@ function Load(width,height){
           if(Point>0) Point--;
           Judgment.frame = 5;
         }
-        iros = iro();
-        Label1.text = iros[0];
-        Label1.color = iros[1];
-        Label3.text = Point;
+        View();
         return;
       })
 
@@ -166,10 +200,7 @@ function Load(width,height){
           if(Point>0) Point--;
           Judgment.frame = 5;
         }
-        iros = iro();
-        Label1.text = iros[0];
-        Label1.color = iros[1];
-        Label3.text = Point;
+        View();
         return;
       })
 
@@ -182,10 +213,7 @@ function Load(width,height){
           if(Point>0) Point--;
           Judgment.frame = 5;
         }
-        iros = iro();
-        Label1.text = iros[0];
-        Label1.color = iros[1];
-        Label3.text = Point;
+        View();
         return;
       })
 
@@ -215,7 +243,7 @@ function Load(width,height){
       */
       return scene;
     };
-    core.replaceScene(MainScene());
+    core.replaceScene(StartScene());
   }
   core.start()
 }
