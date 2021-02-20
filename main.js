@@ -29,7 +29,7 @@ function iro(){
 function Load(width,height){
   var core = new Core(width, height);
 
-  core.preload("ボタン.png");
+  core.preload("ボタン.png","半透明.png");
   core.fps = 100;
   core.onload = function(){
     var StartScene = function(Name){
@@ -188,6 +188,15 @@ function Load(width,height){
           break;
       }
 
+      var Label5 = new Label();
+      Label5.font  = "50px monospace";
+      Label5.x = 450;
+      Label5.y = 0;
+      Label5.width = 300;
+      Label5.height = 300;
+      Label5.text = "中断";
+      scene.addChild(Label5);
+
       var Button_red = new Sprite(150,150);
       Button_red.image = core.assets["ボタン.png"];
       Button_red.x = 0;
@@ -312,6 +321,11 @@ function Load(width,height){
       Button_yellow.addEventListener("touchstart",function(){
         if(seikai=="黄色") View(true);
         else View(false);
+        return;
+      })
+
+      Label5.addEventListener("touchstart",function(){
+        core.pushScene(StopScene(Point,Difficulty,Name));
         return;
       })
 
@@ -446,6 +460,47 @@ function Load(width,height){
          core.replaceScene(StartScene(Name));
          return;
        })
+
+       return scene;
+    };
+    var StopScene = function(Point,Difficulty,Name){
+       var scene = new Scene();                                // 新しいシーンを作る
+
+       var Background = new Sprite(600,600);
+       Background.image = core.assets["半透明.png"];
+       Background.x = 0;
+       Background.y = 0;
+       scene.addChild(Background);
+
+       var Label1 = new Label();
+       Label1.font  = "90px monospace";
+       Label1.y = 150;
+       Label1.width = 300;
+       Label1.height = 90;
+       Label1.text = "続ける";
+       Label1.x = width/2 - Label1.text.length * 45;
+       scene.addChild(Label1);
+
+       var Label2 = new Label();
+       Label2.font  = "90px monospace";
+       Label2.y = 300;
+       Label2.width = 300;
+       Label2.height = 90;
+       Label2.text = "やめる";
+       Label2.x = width/2 - Label1.text.length * 45;
+       scene.addChild(Label2);
+
+       Label1.addEventListener("touchstart",function(){
+         core.popScene();
+         return;
+       })
+
+       Label2.addEventListener("touchstart",function(){
+         core.popScene();
+         core.replaceScene(ENDScene(Point,Difficulty,Name));
+         return;
+       })
+
 
        return scene;
     };
