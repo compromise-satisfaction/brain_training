@@ -35,6 +35,8 @@ function Load(width,height){
     var StartScene = function(){
        var scene = new Scene();                                // 新しいシーンを作る
 
+       var T_I = "red";
+       var S_T = 0;
        var Numbers = 0;
        var Start_text = "ルール:        文字の色をタッチしよう。二分間の正解数から　　　不正回数を引いた数を　　競います。   　　　　　　　　　　　     タッチしてスタート。";
 
@@ -52,6 +54,26 @@ function Load(width,height){
        for (var i = 0; i < Start_text.length; i++) {
          Texts(Start_text[i]);
        }
+
+       Text[15].addEventListener("enterframe",function(){
+         S_T++;
+         if(S_T%10!=0) return;
+         switch (T_I) {
+           case "red":
+             T_I = "blue";
+             break;
+           case "blue":
+            T_I = "yellow";
+            break;
+           case "yellow":
+              T_I = "red";
+              break;
+           default:
+             T_I = "black";
+             break;
+         }
+         this._style.color = T_I;
+       })
 
        scene.on("touchstart",function(e){
          Start_time = new Date().getTime() - new Date().getTime()%1000;
@@ -171,7 +193,7 @@ function Load(width,height){
         return;
       })
 
-      Button_black.addEventListener("enterframe",function(){
+      Label3.addEventListener("enterframe",function(){
         Label3.text = Start_time - (new Date().getTime() - new Date().getTime()%1000)/1000;
         if(Label3.text > 99) Label3.text = Label3.text.substring(0,3);
         else Label3.text = Label3.text.substring(0,2);
