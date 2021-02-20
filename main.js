@@ -29,7 +29,7 @@ function iro(){
 function Load(width,height){
   var core = new Core(width, height);
 
-  core.preload("ボタン.png","半透明.png");
+  core.preload("ボタン.png","半透明.png","読み込み中.gif","背景.png");
   core.fps = 100;
   core.onload = function(){
     var StartScene = function(Name){
@@ -330,22 +330,6 @@ function Load(width,height){
       })
 
       /*
-
-      S_Input5.addEventListener("touchstart",function(){
-        var form = document.createElement('form');
-        var request = document.createElement('input');
-        form.method = 'POST';
-        form.target="_blank";
-        form.action = 'https://script.google.com/macros/s/AKfycbyPUoNDeYxhqB0aUkMm9ySQo29NlrPtG5vLWDP2w9LY9v8TM9mV/exec';
-        request.type = 'hidden'; //入力フォームが表示されないように
-        request.name = "value";
-        request.value = Colors;
-        form.appendChild(request);
-        document.body.appendChild(form);
-        form.submit();
-        return;
-      })
-
       var Colors = 0;
       Label1.addEventListener("enterframe",function(){
         Colors = "rgb(" + S_Input1._element.value + "," + S_Input2._element.value + "," + S_Input3._element.value + ")";
@@ -426,8 +410,37 @@ function Load(width,height){
        var hakkou = false;
        var Code = "";
 
-       S_Input3.addEventListener("touchstart",function(){
+       S_Input2.addEventListener("touchstart",function(){
+         Name = S_Input1._element.value;
+         if(this._element.value == "ランキングを見る"){
+           core.pushScene(ReadScene());
+           fetch
+           (
+             "https://script.google.com/macros/s/AKfycbxmC5AscixoTM6P1eAPeQwQrNn-vbP_B8Aovhant0tDl8r2_C0/exec",
+             {
+               method: "POST",
+               body: "ランキングデータロード"
+             }
+           ).then(res => res.json()).then(result => {
+              core.replaceScene(RankingScene(result));
+              return;
+             },);
+             return;
+         }
+         fetch
+         (
+           "https://script.google.com/macros/s/AKfycbxmC5AscixoTM6P1eAPeQwQrNn-vbP_B8Aovhant0tDl8r2_C0/exec",
+           {
+             method: 'POST',
+             body: Point + "(改行)" + Name
+           }
+         )
+         this._element.value = "ランキングを見る";
+         return;
+       })
 
+       S_Input3.addEventListener("touchstart",function(){
+         Name = S_Input1._element.value;
          if(hakkou){
            S_Input4._element.value = Code;
            return;
@@ -444,6 +457,14 @@ function Load(width,height){
          S_Input4._element.value = Code;
          scene.addChild(S_Input4);
          hakkou = true;
+         fetch
+         (
+           "https://script.google.com/macros/s/AKfycbxmC5AscixoTM6P1eAPeQwQrNn-vbP_B8Aovhant0tDl8r2_C0/exec",
+           {
+             method: 'POST',
+             body: "発行" + Code + Point
+           }
+         )
          return;
        })
 
@@ -501,6 +522,59 @@ function Load(width,height){
          return;
        })
 
+
+       return scene;
+    };
+    var ReadScene = function(){
+       var scene = new Scene();                                // 新しいシーンを作る
+
+       var Background = new Sprite(600,600);
+       Background.image = core.assets["読み込み中.gif"];
+       Background.x = 0;
+       Background.y = 0;
+       scene.addChild(Background);
+
+       return scene;
+    };
+    var RankingScene = function(Datas){
+       var scene = new Scene();                                // 新しいシーンを作る
+
+       var Background = new Sprite(600,600);
+       Background.image = core.assets["背景.png"];
+       Background.x = 0;
+       Background.y = 0;
+       scene.addChild(Background);
+
+       var Label1 = new Label();
+       Label1.font  = "50px monospace";
+       Label1.y = 500;
+       Label1.width = 300;
+       Label1.height = 90;
+       Label1.text = "戻る";
+       Label1.x = width/2 - Label1.text.length * 25;
+       scene.addChild(Label1);
+
+       var Numbers = 60;
+
+       function Texts(a){
+         Text[i] = new Sprite();
+         Text[i]._element = document.createElement("innerHTML");
+         Text[i]._style.font  = "30px monospace";
+         Text[i]._element.textContent = a;
+         Text[i].x = 60;
+         Text[i].y = Numbers;
+         Numbers += 35;
+         scene.addChild(Text[i]);
+       }
+
+       for (var i = 0; i < Datas.length; i++) {
+         Texts(Datas[i].順位 + "位 " + Datas[i].ポイント + "ポイント " + Datas[i].名前);
+       }
+
+       Label1.addEventListener("touchstart",function(){
+         core.popScene();
+         return;
+       })
 
        return scene;
     };
