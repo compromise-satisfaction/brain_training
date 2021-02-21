@@ -409,6 +409,8 @@ function Load(width,height){
 
        var hakkou = false;
        var Code = "";
+       if(Difficulty) var Rank = "上級";
+       else var Rank = "通常";
 
        S_Input2.addEventListener("touchstart",function(){
          Name = S_Input1._element.value;
@@ -419,7 +421,7 @@ function Load(width,height){
              "https://script.google.com/macros/s/AKfycbxmC5AscixoTM6P1eAPeQwQrNn-vbP_B8Aovhant0tDl8r2_C0/exec",
              {
                method: "POST",
-               body: "ランキングデータロード"
+               body: Rank + "ランキングデータロード"
              }
            ).then(res => res.json()).then(result => {
               core.replaceScene(RankingScene(result));
@@ -432,7 +434,7 @@ function Load(width,height){
            "https://script.google.com/macros/s/AKfycbxmC5AscixoTM6P1eAPeQwQrNn-vbP_B8Aovhant0tDl8r2_C0/exec",
            {
              method: 'POST',
-             body: Point + "(改行)" + Name
+             body: Rank + Point + "(改行)" + Name
            }
          )
          this._element.value = "ランキングを見る";
