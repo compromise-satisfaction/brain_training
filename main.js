@@ -29,7 +29,7 @@ function iro(){
 function Load(width,height){
   var core = new Core(width, height);
 
-  core.preload("ボタン.png","半透明.png","読み込み中.gif","背景.png");
+  core.preload("ボタン.png","半透明.png","黒透明.png","背景.png","上下.png");
   core.fps = 100;
   core.onload = function(){
     var StartScene = function(Name){
@@ -415,7 +415,7 @@ function Load(width,height){
        S_Input2.addEventListener("touchstart",function(){
          Name = S_Input1._element.value;
          if(this._element.value == "ランキングを見る"){
-           core.pushScene(ReadScene());
+           core.pushScene(ReadScene("読み込み"));
            fetch
            (
              "https://script.google.com/macros/s/AKfycbxmC5AscixoTM6P1eAPeQwQrNn-vbP_B8Aovhant0tDl8r2_C0/exec",
@@ -424,11 +424,12 @@ function Load(width,height){
                body: Rank + "ランキングデータロード"
              }
            ).then(res => res.json()).then(result => {
-              core.replaceScene(RankingScene(result));
+              core.replaceScene(RankingScene(result,0));
               return;
              },);
              return;
          }
+         core.pushScene(ReadScene("保存"));
          fetch
          (
            "https://script.google.com/macros/s/AKfycbxmC5AscixoTM6P1eAPeQwQrNn-vbP_B8Aovhant0tDl8r2_C0/exec",
@@ -436,8 +437,11 @@ function Load(width,height){
              method: 'POST',
              body: Rank + Point + "(改行)" + Name
            }
-         )
-         this._element.value = "ランキングを見る";
+         ).then(res => res.json()).then(result => {
+            core.popScene();
+            this._element.value = "ランキングを見る";
+            return;
+           },);
          return;
        })
 
@@ -527,18 +531,26 @@ function Load(width,height){
 
        return scene;
     };
-    var ReadScene = function(){
+    var ReadScene = function(Type){
        var scene = new Scene();                                // 新しいシーンを作る
 
        var Background = new Sprite(600,600);
-       Background.image = core.assets["読み込み中.gif"];
+       Background.image = core.assets["黒透明.png"];
        Background.x = 0;
        Background.y = 0;
        scene.addChild(Background);
 
+       var Loading = new Entity();
+       Loading._element = document.createElement("img");
+       if(Type=="読み込み") Loading._element.src = "読み込み中.gif";
+       else Loading._element.src = "送信中.gif";
+       Loading.width = width;
+       Loading.height = height;
+       scene.addChild(Loading);
+
        return scene;
     };
-    var RankingScene = function(Datas){
+    var RankingScene = function(Datas,Number){
        var scene = new Scene();                                // 新しいシーンを作る
 
        var Background = new Sprite(600,600);
@@ -556,25 +568,100 @@ function Load(width,height){
        Label1.x = width/2 - Label1.text.length * 25;
        scene.addChild(Label1);
 
-       var Numbers = 60;
+       var UP1 = new Sprite(80,80);
+       UP1.image = core.assets["上下.png"];
+       UP1.x = 35;
+       UP1.y = 405;
 
-       function Texts(a){
+       var UP2 = new Sprite(80,80);
+       UP2.image = core.assets["上下.png"];
+       UP2.x = 485;
+       UP2.y = 405;
+
+       var DOWN1 = new Sprite(80,80);
+       DOWN1.image = core.assets["上下.png"];
+       DOWN1.x = 35;
+       DOWN1.y = 485;
+       DOWN1.frame = 1;
+
+       var DOWN2 = new Sprite(80,80);
+       DOWN2.image = core.assets["上下.png"];
+       DOWN2.x = 485;
+       DOWN2.y = 485;
+       DOWN2.frame = 1;
+
+       if(Number > 0){
+         scene.addChild(UP1);
+         scene.addChild(UP2);
+       }
+
+       if(Datas.length > Number + 10){
+         scene.addChild(DOWN1);
+         scene.addChild(DOWN2);
+       }
+
+       var Numbers = 40;
+
+       function Texts(a,b){
          Text[i] = new Sprite();
          Text[i]._element = document.createElement("innerHTML");
          Text[i]._style.font  = "30px monospace";
          Text[i]._element.textContent = a;
-         Text[i].x = 60;
+         Text[i].x = b;
          Text[i].y = Numbers;
-         Numbers += 35;
          scene.addChild(Text[i]);
        }
 
-       for (var i = 0; i < Datas.length; i++) {
-         Texts(Datas[i].順位 + "位 " + Datas[i].ポイント + "ポイント " + Datas[i].名前);
+       var Result = [];
+       var k = 0;
+       var R_X = null;
+
+       for (var i = Number; i < Number + 10; i++) {
+         if(Datas.length <= i) break;
+         Result[k] = Datas[i];
+         k++;
+       }
+
+       for (var i = 0; i < Result.length; i++) {
+         R_X = 40;
+         if(Result[i].順位 < 10) R_X += 15;
+         if(Result[i].順位 < 100) R_X += 15;
+         if(Result[i].順位 < 1000) R_X += 15;
+         if(Result[i].順位 < 10000) R_X += 15;
+         if(Result[i].順位 < 100000) R_X += 15;
+         Texts(Result[i].順位+"位",R_X);
+         R_X = 180;
+         if(Result[i].ポイント < 10) R_X += 15;
+         if(Result[i].ポイント < 100) R_X += 15;
+         if(Result[i].ポイント < 1000) R_X += 15;
+         Texts(Result[i].ポイント+"ポイント",R_X);
+         R_X = 380;
+         Texts(Result[i].名前,R_X);
+         Numbers += 35;
        }
 
        Label1.addEventListener("touchstart",function(){
          core.popScene();
+         return;
+       })
+
+       UP1.addEventListener("touchstart",function(){
+         core.replaceScene(RankingScene(Datas,Number-1));
+         return;
+       })
+
+       UP2.addEventListener("touchstart",function(){
+         core.replaceScene(RankingScene(Datas,Number-1));
+         return;
+       })
+
+       DOWN1.addEventListener("touchstart",function(){
+         core.replaceScene(RankingScene(Datas,Number+1));
+         return;
+       })
+
+       DOWN2.addEventListener("touchstart",function(){
+         core.replaceScene(RankingScene(Datas,Number+1));
          return;
        })
 
