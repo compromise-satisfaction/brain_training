@@ -349,7 +349,7 @@ function Load(width,height){
        Label1.font  = "30px monospace";
        Label1.x = 150;
        Label1.y = 50;
-       Label1.width = 300;
+       Label1.width = 600;
        Label1.height = 300;
        Label1.text = Point + "ポイント獲得！";
        scene.addChild(Label1);
@@ -416,6 +416,10 @@ function Load(width,height){
        else var Rank = "通常";
 
        S_Input2.addEventListener("touchstart",function(){
+         if(S_Input1._element.value.length>6){
+           Label1.text = "名前は六文字以下です。";
+           return;
+         }
          Name = S_Input1._element.value;
          window.localStorage.setItem("Name",Name);
          if(this._element.value == "ランキングを見る"){
@@ -450,6 +454,10 @@ function Load(width,height){
        })
 
        S_Input3.addEventListener("touchstart",function(){
+         if(S_Input1._element.value.length>6){
+           Label1.text = "名前は六文字以下です。";
+           return;
+         }
          Name = S_Input1._element.value;
          window.localStorage.setItem("Name",Name);
          if(hakkou){
@@ -480,6 +488,10 @@ function Load(width,height){
        })
 
        S_Input5.addEventListener("touchstart",function(){
+         if(S_Input1._element.value.length>6){
+           Label1.text = "名前は六文字以下です。";
+           return;
+         }
          Name = S_Input1._element.value;
          window.localStorage.setItem("Name",Name);
          core.replaceScene(MainScene(Difficulty,Name));
@@ -487,6 +499,10 @@ function Load(width,height){
        })
 
        S_Input6.addEventListener("touchstart",function(){
+         if(S_Input1._element.value.length>6){
+           Label1.text = "名前は六文字以下です。";
+           return;
+         }
          Name = S_Input1._element.value;
          window.localStorage.setItem("Name",Name);
          core.replaceScene(StartScene(Name));
