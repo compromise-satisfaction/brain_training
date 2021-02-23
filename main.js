@@ -1,7 +1,5 @@
 enchant()
 
-var Start_time = null;
-
 function rand(n){
   return Math.floor(Math.random() * (n));
 }
@@ -30,7 +28,7 @@ function Load(width,height){
   var core = new Core(width, height);
 
   core.preload("ボタン.png","半透明.png","黒透明.png","背景.png","上下.png");
-  core.fps = 100;
+  core.fps = 30;
   core.onload = function(){
     var StartScene = function(Name){
        var scene = new Scene();                                // 新しいシーンを作る
@@ -38,17 +36,22 @@ function Load(width,height){
        var T_I = "red";
        var S_T = 0;
        var Numbers = 0;
-       var Start_text = "ルール:           文字の色をタッチしよう。   ";
-       Start_text += "二分間の正解数から不正回数を 引いた数を競います。　　　　　";
-       Start_text += "上級は色か文字かを　　　　　　タッチする指示が出て　　　　　正解ポイントが二倍です。";
+       var Start_text = "ルール:              ";
+       Start_text += "文字の色をタッチしよう。      ";
+       Start_text += "時間内の正解数から不正回数を    ";
+       Start_text += "引いた数を競います。　　 　  　　";
+       Start_text += "上級は色か文字かを　　　　    　";
+       Start_text += "タッチする指示が出て　　　   　　";
+       Start_text += "連続正解した分ポイントになります。 ";
+       Start_text += "不正解は-10ポイントです。";
 
        function Texts(a){
-         if(i%15==0) Numbers += 30;
+         if(i%18==0) Numbers += 30;
          Text[i] = new Sprite();
          Text[i]._element = document.createElement("innerHTML");
          Text[i]._style.font  = "30px monospace";
          Text[i]._element.textContent = a;
-         Text[i].x = 30 * (i%15);
+         Text[i].x = 30 * (i%18);
          Text[i].y = Numbers;
          scene.addChild(Text[i]);
        }
@@ -75,7 +78,7 @@ function Load(width,height){
          Texts(Start_text[i]);
        }
 
-       Text[18].addEventListener("enterframe",function(){
+       Text[21].addEventListener("enterframe",function(){
          S_T++;
          if(S_T%10!=0) return;
          switch (T_I) {
@@ -96,14 +99,10 @@ function Load(width,height){
        })
 
        Label1.addEventListener("touchstart",function(e){
-         Start_time = new Date().getTime() - new Date().getTime()%1000;
-         Start_time = Start_time/1000 + 120;
          core.replaceScene(MainScene(false,Name));
        })
 
        Label2.addEventListener("touchstart",function(e){
-         Start_time = new Date().getTime() - new Date().getTime()%1000;
-         Start_time = Start_time/1000 + 120;
          core.replaceScene(MainScene(true,Name));
        })
 
@@ -112,6 +111,7 @@ function Load(width,height){
     var MainScene = function(Difficulty,Name){
       var scene = new Scene();                                // 新しいシーンを作る
 
+      var Time = 1000;
       var iros = iro();
       var seikai = null;
 
@@ -140,8 +140,10 @@ function Load(width,height){
       Label3.y = 180;
       Label3.width = 600;
       Label3.height = 20;
-      Label3.text = "残り時間:120秒";
+      Label3.text = "残り時間:" + Time;
       scene.addChild(Label3);
+
+      var P_P = 1;
 
       if(Difficulty){
 
@@ -236,12 +238,15 @@ function Load(width,height){
 
       function View(aaaa){
         if(aaaa){
-          Point++;
-          if(Difficulty) Point++;
+          Point += P_P;
+          if(Difficulty) P_P++;
           Judgment.frame = 4;
         }
         else{
-          if(Point>0) Point--;
+          if(Difficulty) Point -= 10;
+          else Point --;
+          if(Point<0) Point = 0;
+          P_P = 1;
           Judgment.frame = 5;
         }
         var old_iros1 = iros[0]
@@ -293,11 +298,9 @@ function Load(width,height){
       }
 
       Label3.addEventListener("enterframe",function(){
-        Label3.text = Start_time - (new Date().getTime() - new Date().getTime()%1000)/1000;
-        if(Label3.text < 100) Label3.text = Label3.text.substring(0,2);
-        else Label3.text = Label3.text.substring(0,3);
-        if(Label3.text < 0) core.replaceScene(ENDScene(Point,Difficulty,Name));
-        Label3.text = "残り時間:" + Label3.text + "秒";
+        Time--;
+        if(Time==0) core.replaceScene(ENDScene(Point,Difficulty,Name));
+        Label3.text = "残り時間:" + Time;
       })
 
       Button_red.addEventListener("touchstart",function(){
@@ -476,8 +479,6 @@ function Load(width,height){
 
        S_Input5.addEventListener("touchstart",function(){
          Name = S_Input1._element.value;
-         Start_time = new Date().getTime() - new Date().getTime()%1000;
-         Start_time = Start_time/1000 + 120;
          core.replaceScene(MainScene(Difficulty,Name));
          return;
        })
@@ -634,6 +635,7 @@ function Load(width,height){
          if(Result[i].ポイント < 10) R_X += 15;
          if(Result[i].ポイント < 100) R_X += 15;
          if(Result[i].ポイント < 1000) R_X += 15;
+         if(Result[i].ポイント < 10000) R_X += 15;
          Texts(Result[i].ポイント+"ポイント",R_X);
          R_X = 380;
          Texts(Result[i].名前,R_X);
