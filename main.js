@@ -417,6 +417,7 @@ function Load(width,height){
 
        S_Input2.addEventListener("touchstart",function(){
          Name = S_Input1._element.value;
+         window.localStorage.setItem("Name",Name);
          if(this._element.value == "ランキングを見る"){
            core.pushScene(ReadScene("読み込み"));
            fetch
@@ -450,6 +451,7 @@ function Load(width,height){
 
        S_Input3.addEventListener("touchstart",function(){
          Name = S_Input1._element.value;
+         window.localStorage.setItem("Name",Name);
          if(hakkou){
            S_Input4._element.value = Code;
            return;
@@ -479,12 +481,14 @@ function Load(width,height){
 
        S_Input5.addEventListener("touchstart",function(){
          Name = S_Input1._element.value;
+         window.localStorage.setItem("Name",Name);
          core.replaceScene(MainScene(Difficulty,Name));
          return;
        })
 
        S_Input6.addEventListener("touchstart",function(){
          Name = S_Input1._element.value;
+         window.localStorage.setItem("Name",Name);
          core.replaceScene(StartScene(Name));
          return;
        })
@@ -669,7 +673,9 @@ function Load(width,height){
 
        return scene;
     };
-    core.replaceScene(StartScene("名無しさん"));
+    var Name = window.localStorage.getItem("Name");
+    if(!Name) Name = "名無しさん";
+    core.replaceScene(StartScene(Name));
   }
   core.start()
 }
