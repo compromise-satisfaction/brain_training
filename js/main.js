@@ -106,6 +106,20 @@ function Load(width,height){
          core.replaceScene(MainScene(true,Name));
        })
 
+       var S_Input1 = new Entity();
+       S_Input1.moveTo(150,450);
+       S_Input1.width = 300;
+       S_Input1.height = 30;
+       S_Input1._element = document.createElement('input');
+       S_Input1._element.value = "機種変更";
+       S_Input1._element.type = "submit";
+       scene.addChild(S_Input1);
+
+       S_Input1.addEventListener("touchstart",function(){
+         core.pushScene(ChangeScene());
+         return;
+       })
+
        return scene;
     };
     var MainScene = function(Difficulty,Name){
@@ -332,14 +346,6 @@ function Load(width,height){
         return;
       })
 
-      /*
-      var Colors = 0;
-      Label1.addEventListener("enterframe",function(){
-        Colors = "rgb(" + S_Input1._element.value + "," + S_Input2._element.value + "," + S_Input3._element.value + ")";
-        Label1.color = Colors;
-        S_Input4._element.value = Label1.color;
-      })
-      */
       return scene;
     };
     var ENDScene = function(Point,Difficulty,Name){
@@ -421,15 +427,6 @@ function Load(width,height){
          scene.addChild(S_Input7);
        }
        else S_Input2._element.value = "ランキングを見る";
-
-       var S_Input8 = new Entity();
-       S_Input8.moveTo(150,450);
-       S_Input8.width = 300;
-       S_Input8.height = 30;
-       S_Input8._element = document.createElement('input');
-       S_Input8._element.value = "データ削除";
-       S_Input8._element.type = "submit";
-       //scene.addChild(S_Input8);
 
        var hakkou = false;
        var Code = "";
@@ -557,11 +554,6 @@ function Load(width,height){
             return;
            },);
            return;
-       })
-
-       S_Input8.addEventListener("touchstart",function(){
-         window.localStorage.clear();
-         return;
        })
 
        return scene;
@@ -741,6 +733,77 @@ function Load(width,height){
 
        DOWN2.addEventListener("touchstart",function(){
          core.replaceScene(RankingScene(Datas,Number+1));
+         return;
+       })
+
+       return scene;
+    };
+    var ChangeScene = function(){
+       var scene = new Scene();                                // 新しいシーンを作る
+
+       var Background = new Sprite(600,600);
+       Background.image = core.assets["../画像/背景.png"];
+       Background.x = 0;
+       Background.y = 0;
+       scene.addChild(Background);
+
+       var S_Input1 = new Entity();
+       S_Input1.moveTo(150,100);
+       S_Input1.width = 300;
+       S_Input1.height = 30;
+       S_Input1._element = document.createElement('input');
+       S_Input1._element.value = "他の端末からこの端末へデータを移行";
+       S_Input1._element.type = "submit";
+       scene.addChild(S_Input1);
+
+        var S_Input2 = new Entity();
+        S_Input2.moveTo(150,200);
+        S_Input2.width = 300;
+        S_Input2.height = 30;
+        S_Input2._element = document.createElement('input');
+        S_Input2._element.value = "この端末から他の端末へデータを移行";
+        S_Input2._element.type = "submit";
+        scene.addChild(S_Input2);
+
+        var S_Input3 = new Entity();
+        S_Input3.moveTo(150,520);
+        S_Input3.width = 300;
+        S_Input3.height = 30;
+        S_Input3._element = document.createElement('input');
+        S_Input3._element.value = "やめる";
+        S_Input3._element.type = "submit";
+        scene.addChild(S_Input3);
+
+       var S_Input4 = new Entity();
+       S_Input4.moveTo(1500,1500);
+       S_Input4.width = 300;
+       S_Input4.height = 30;
+       S_Input4._element = document.createElement('input');
+       S_Input4._element.type = "text";
+       S_Input4._element.name = "myText";
+       scene.addChild(S_Input4);
+
+       S_Input1.addEventListener("touchstart",function(){
+         S_Input4.moveTo(150,300);
+         S_Input4._element.value = "";
+         S_Input4._element.placeholder = "ここにIDを入力";
+         S_Input3._element.value = "引継ぎ";
+         return;
+       })
+
+       S_Input2.addEventListener("touchstart",function(){
+         S_Input4.moveTo(150,300);
+         S_Input4._element.value = ID;
+         S_Input4._element.placeholder = "あなたのID";
+         S_Input3._element.value = "やめる";
+         return;
+       })
+
+       S_Input3.addEventListener("touchstart",function(){
+         if(S_Input3._element.value == "引継ぎ"){
+           ID = S_Input4._element.value;
+         }
+         core.popScene();
          return;
        })
 
