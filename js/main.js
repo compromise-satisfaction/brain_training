@@ -380,7 +380,7 @@ function Load(width,height){
        S_Input3._element = document.createElement('input');
        S_Input3._element.value = "ポイントコード発行";
        S_Input3._element.type = "submit";
-       scene.addChild(S_Input3);
+       if(HTML=="Tanakake") scene.addChild(S_Input3);
 
        var S_Input4 = new Entity();
        S_Input4.moveTo(150,250);
@@ -422,6 +422,15 @@ function Load(width,height){
        }
        else S_Input2._element.value = "ランキングを見る";
 
+       var S_Input8 = new Entity();
+       S_Input8.moveTo(150,450);
+       S_Input8.width = 300;
+       S_Input8.height = 30;
+       S_Input8._element = document.createElement('input');
+       S_Input8._element.value = "データ削除";
+       S_Input8._element.type = "submit";
+       //scene.addChild(S_Input8);
+
        var hakkou = false;
        var Code = "";
        if(HTML == "index"){
@@ -461,7 +470,7 @@ function Load(width,height){
            "https://script.google.com/macros/s/AKfycbxmC5AscixoTM6P1eAPeQwQrNn-vbP_B8Aovhant0tDl8r2_C0/exec",
            {
              method: 'POST',
-             body: Rank + Point + "(改行)" + Name
+             body: Rank + Point + "(改行)" + Name + "(改行)" + ID
            }
          ).then(res => res.json()).then(result => {
             core.popScene();
@@ -548,6 +557,11 @@ function Load(width,height){
             return;
            },);
            return;
+       })
+
+       S_Input8.addEventListener("touchstart",function(){
+         window.localStorage.clear();
+         return;
        })
 
        return scene;
@@ -732,8 +746,19 @@ function Load(width,height){
 
        return scene;
     };
-    var Name = window.localStorage.getItem("Name");
-    if(!Name) Name = "名無しさん";
+    var ID = window.localStorage.getItem("ID");
+    if(!ID){
+      Name = "名無しさん";
+      var Codes = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z",
+      "A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z",
+      "1","2","3","4","5","6","7","8","9"];
+      ID = "";
+      for (var i = 0; i < 10; i++) {
+        ID += Codes[rand(Codes.length)];
+      }
+      window.localStorage.setItem("ID",ID);
+    }
+    else Name = window.localStorage.getItem("Name");
     core.replaceScene(StartScene(Name));
   }
   core.start()
