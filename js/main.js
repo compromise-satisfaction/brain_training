@@ -802,6 +802,7 @@ function Load(width,height){
        S_Input3.addEventListener("touchstart",function(){
          if(S_Input3._element.value == "引継ぎ"){
            ID = S_Input4._element.value;
+           window.localStorage.setItem("ID",ID);
          }
          core.popScene();
          return;
