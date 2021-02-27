@@ -852,6 +852,7 @@ function Load(width,height){
              Label1.x = width/2 - Label1.text.length * 50;
              break;
            case "スタート！":
+             core.fps = 30;
              core.popScene();
              break;
          }
