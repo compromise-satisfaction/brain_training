@@ -100,10 +100,12 @@ function Load(width,height){
 
        Label1.addEventListener("touchstart",function(e){
          core.replaceScene(MainScene(false,Name));
+         core.pushScene(CountdownScene());
        })
 
        Label2.addEventListener("touchstart",function(e){
          core.replaceScene(MainScene(true,Name));
+         core.pushScene(CountdownScene());
        })
 
        var S_Input1 = new Entity();
@@ -520,6 +522,7 @@ function Load(width,height){
          Name = S_Input1._element.value;
          window.localStorage.setItem("Name",Name);
          core.replaceScene(MainScene(Difficulty,Name));
+         core.pushScene(CountdownScene());
          return;
        })
 
@@ -588,7 +591,7 @@ function Load(width,height){
        scene.addChild(Label2);
 
        Label1.addEventListener("touchstart",function(){
-         core.popScene();
+         core.replaceScene(CountdownScene());
          return;
        })
 
@@ -806,6 +809,52 @@ function Load(width,height){
          }
          core.popScene();
          return;
+       })
+
+       return scene;
+    };
+    var CountdownScene = function(){
+       var scene = new Scene();                                // 新しいシーンを作る
+
+       var Background = new Sprite(600,600);
+       Background.image = core.assets["../画像/黒半透明.png"];
+       Background.x = 0;
+       Background.y = 0;
+       scene.addChild(Background);
+
+       var Label1 = new Label();
+       Label1.font  = "100px monospace";
+       Label1.text = "四";
+       Label1.width = Label1.text.length * 100;
+       Label1.height = 100;
+       Label1.x = width/2 - Label1.text.length * 50;
+       Label1.y = width/2 - 75;
+       Label1.backgroundColor = "white";
+       Label1.color = "green";
+       scene.addChild(Label1);
+
+       core.fps = 1;
+
+       Label1.addEventListener("enterframe",function(){
+         switch (Label1.text) {
+           case "四":
+             Label1.text = "三";
+             break;
+           case "三":
+             Label1.text = "二";
+             break;
+           case "二":
+             Label1.text = "一";
+             break;
+           case "一":
+             Label1.text = "スタート！";
+             Label1.width = Label1.text.length * 100;
+             Label1.x = width/2 - Label1.text.length * 50;
+             break;
+           case "スタート！":
+             core.popScene();
+             break;
+         }
        })
 
        return scene;
