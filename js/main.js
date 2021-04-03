@@ -122,6 +122,21 @@ function Load(width,height){
          return;
        })
 
+       var Button = new Entity();
+       Button.moveTo((width/5)*4,height-(width/5));
+       Button.width = (width/5);
+       Button.height = (width/5);
+       Button._element = document.createElement('input');
+       Button._element.type = "submit";
+       Button._element.value = "ノベルゲーム";
+       Button.backgroundColor = "buttonface";
+       scene.addChild(Button);
+       Button._element.onclick = function(e){
+         core.popScene();
+         novel_game_load(405,600);
+         return;
+       };
+
        return scene;
     };
     var MainScene = function(Difficulty,Name){
